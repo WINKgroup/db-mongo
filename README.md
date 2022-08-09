@@ -15,6 +15,3 @@ async function foo() {
 }
 
 ```
-
-## contributors
-to create the `build` directory:

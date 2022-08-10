@@ -15,3 +15,9 @@ async function foo() {
 }
 
 ```
+
+## contributing and tests
+If you are activly developing this package and you want to run tests you will need to create a `.env` file with this line:
+```
+DB_URI={ your db connection }
+```

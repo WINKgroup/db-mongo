@@ -58,7 +58,7 @@ export default class Db extends EventEmitter {
             
             const onConnected = () => {
                 this.singleton.removeListener('connected', onConnected)
-                return this.singleton.db
+                resolve(this.singleton.db)
             }
 
             this.singleton.on('connected', onConnected)

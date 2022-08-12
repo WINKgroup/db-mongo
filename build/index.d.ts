@@ -16,7 +16,7 @@ export default class Db extends EventEmitter {
     private connectionStarted;
     private constructor();
     private connect;
-    fromQueryToMaterialTableData(query: mongoose.Query<any[], any>, search: MaterialTableSearch): Promise<{
+    static fromQueryToMaterialTableData(query: mongoose.Query<any[], any>, search: MaterialTableSearch): Promise<{
         data: any[];
         page: number;
         totalCount: number;

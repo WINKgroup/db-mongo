@@ -92,7 +92,7 @@ var Db = /** @class */ (function (_super) {
             });
         });
     };
-    Db.prototype.fromQueryToMaterialTableData = function (query, search) {
+    Db.fromQueryToMaterialTableData = function (query, search) {
         return __awaiter(this, void 0, void 0, function () {
             var totalCount, sortField, data;
             return __generator(this, function (_a) {

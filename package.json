@@ -1,6 +1,6 @@
 {
   "name": "@winkgroup/db-mongo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Singleton class to manage Mongo DB connection",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
@@ -10,7 +10,7 @@
   "scripts": {
     "test": "npx jest",
     "clean": "rm -rf build",
-    "build": "npm run clean && tsc"
+    "build": "npm run clean && npx tsc"
   },
   "repository": {
     "type": "git",

@@ -35,7 +35,7 @@ export default class Db extends EventEmitter {
         }
     }
  
-    async fromQueryToMaterialTableData(query:mongoose.Query<any[], any>, search:MaterialTableSearch) {
+    static async fromQueryToMaterialTableData(query:mongoose.Query<any[], any>, search:MaterialTableSearch) {
         const totalCount = await _.clone(query).countDocuments()
         if (search.orderBy) {
             const sortField = (search.orderDirection !== 'desc' ? '' : '-') + search.orderBy.field

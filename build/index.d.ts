@@ -1,19 +1,11 @@
 import mongoose from 'mongoose';
-export interface MaterialTableSearch {
-    page: number;
-    search: string;
-    pageSize: number;
-    orderBy: {
-        field: string;
-    };
-    orderDirection: 'asc' | 'desc';
-}
+import { DataGridQuery } from './commons';
 export default class Db {
     private static connections;
     private conn;
     private constructor();
     get(): mongoose.Connection;
-    static fromQueryToMaterialTableData(query: mongoose.Query<any[], any>, search: MaterialTableSearch): Promise<{
+    static fromQueryToMaterialTableData(query: mongoose.Query<any[], any>, searchQuery: DataGridQuery): Promise<{
         data: any[];
         page: number;
         totalCount: number;

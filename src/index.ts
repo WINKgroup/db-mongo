@@ -1,16 +1,7 @@
 import _ from 'lodash'
 import mongoose from 'mongoose'
 import Env from '@winkgroup/env'
-
-export interface MaterialTableSearch {
-    page: number
-    search: string
-    pageSize: number
-    orderBy: {
-        field: string
-    },
-    orderDirection: 'asc' | 'desc'
-}
+import { DataGridQuery } from './commons'
 
 export default class Db {
     private static connections:{[key:string]: Db} = {}
@@ -21,17 +12,17 @@ export default class Db {
 
     get() { return this.conn }
 
-    static async fromQueryToMaterialTableData(query:mongoose.Query<any[], any>, search:MaterialTableSearch) {
+    static async fromQueryToMaterialTableData(query:mongoose.Query<any[], any>, searchQuery:DataGridQuery) {
         const totalCount = await _.clone(query).countDocuments()
-        if (search.orderBy) {
-            const sortField = (search.orderDirection !== 'desc' ? '' : '-') + search.orderBy.field
+        if (searchQuery.orderBy) {
+            const sortField = (searchQuery.orderDirection !== 'desc' ? '' : '-') + searchQuery.orderBy
             query.sort( sortField )
         }
-        const data = await query.skip(search.pageSize * search.page).limit(search.pageSize)
+        const data = await query.skip(searchQuery.pageSize * searchQuery.page).limit(searchQuery.pageSize)
 
         return {
             data: data,
-            page: search.page,
+            page: searchQuery.page,
             totalCount: totalCount
         }
     }

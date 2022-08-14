@@ -47,7 +47,7 @@ var Db = /** @class */ (function () {
         this.conn = mongoose_1.default.createConnection(dbUri);
     }
     Db.prototype.get = function () { return this.conn; };
-    Db.fromQueryToMaterialTableData = function (query, search) {
+    Db.fromQueryToMaterialTableData = function (query, searchQuery) {
         return __awaiter(this, void 0, void 0, function () {
             var totalCount, sortField, data;
             return __generator(this, function (_a) {
@@ -55,16 +55,16 @@ var Db = /** @class */ (function () {
                     case 0: return [4 /*yield*/, lodash_1.default.clone(query).countDocuments()];
                     case 1:
                         totalCount = _a.sent();
-                        if (search.orderBy) {
-                            sortField = (search.orderDirection !== 'desc' ? '' : '-') + search.orderBy.field;
+                        if (searchQuery.orderBy) {
+                            sortField = (searchQuery.orderDirection !== 'desc' ? '' : '-') + searchQuery.orderBy;
                             query.sort(sortField);
                         }
-                        return [4 /*yield*/, query.skip(search.pageSize * search.page).limit(search.pageSize)];
+                        return [4 /*yield*/, query.skip(searchQuery.pageSize * searchQuery.page).limit(searchQuery.pageSize)];
                     case 2:
                         data = _a.sent();
                         return [2 /*return*/, {
                                 data: data,
-                                page: search.page,
+                                page: searchQuery.page,
                                 totalCount: totalCount
                             }];
                 }

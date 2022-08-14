@@ -57,7 +57,7 @@ var Db = /** @class */ (function () {
                         totalCount = _a.sent();
                         if (searchQuery.orderBy) {
                             sortField = (searchQuery.orderDirection !== 'desc' ? '' : '-') + searchQuery.orderBy;
-                            query.sort(sortField);
+                            query.collation({ locale: "en" }).sort(sortField);
                         }
                         return [4 /*yield*/, query.skip(searchQuery.pageSize * searchQuery.page).limit(searchQuery.pageSize)];
                     case 2:

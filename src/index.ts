@@ -16,7 +16,7 @@ export default class Db {
         const totalCount = await _.clone(query).countDocuments()
         if (searchQuery.orderBy) {
             const sortField = (searchQuery.orderDirection !== 'desc' ? '' : '-') + searchQuery.orderBy
-            query.sort( sortField )
+            query.collation({locale: "en"}).sort( sortField )
         }
         const data = await query.skip(searchQuery.pageSize * searchQuery.page).limit(searchQuery.pageSize)
 

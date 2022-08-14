@@ -1,19 +1,4 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -57,41 +42,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var lodash_1 = __importDefault(require("lodash"));
 var mongoose_1 = __importDefault(require("mongoose"));
 var env_1 = __importDefault(require("@winkgroup/env"));
-var node_events_1 = require("node:events");
-var Db = /** @class */ (function (_super) {
-    __extends(Db, _super);
-    function Db() {
-        var _this = _super.call(this) || this;
-        _this.db = mongoose_1.default;
-        _this.connectionStarted = false;
-        return _this;
+var Db = /** @class */ (function () {
+    function Db(dbUri) {
+        this.conn = mongoose_1.default.createConnection(dbUri);
     }
-    Db.prototype.connect = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var dbUri, e_1;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        this.connectionStarted = true;
-                        dbUri = env_1.default.get('DB_URI');
-                        console.info("Connecting ".concat(dbUri, "..."));
-                        return [4 /*yield*/, this.db.connect(dbUri)];
-                    case 1:
-                        _a.sent();
-                        console.info("DB Connected!");
-                        this.emit('connected');
-                        return [3 /*break*/, 3];
-                    case 2:
-                        e_1 = _a.sent();
-                        console.error(e_1);
-                        this.emit('error', e_1);
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
+    Db.prototype.get = function () { return this.conn; };
     Db.fromQueryToMaterialTableData = function (query, search) {
         return __awaiter(this, void 0, void 0, function () {
             var totalCount, sortField, data;
@@ -116,22 +71,14 @@ var Db = /** @class */ (function (_super) {
             });
         });
     };
-    Db.get = function () {
-        var _this = this;
-        if (!this.singleton)
-            this.singleton = new Db();
-        return new Promise(function (resolve, reject) {
-            if (_this.singleton.db.connection.readyState === 1)
-                resolve(_this.singleton.db);
-            var onConnected = function () {
-                _this.singleton.removeListener('connected', onConnected);
-                resolve(_this.singleton.db);
-            };
-            _this.singleton.on('connected', onConnected);
-            if (!_this.singleton.connectionStarted)
-                _this.singleton.connect();
-        });
+    Db.get = function (dbUri) {
+        if (!dbUri)
+            dbUri = env_1.default.get('DB_URI');
+        if (!this.connections[dbUri])
+            this.connections[dbUri] = new Db(dbUri);
+        return this.connections[dbUri].conn;
     };
+    Db.connections = {};
     return Db;
-}(node_events_1.EventEmitter));
+}());
 exports.default = Db;

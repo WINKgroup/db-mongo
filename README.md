@@ -1,5 +1,6 @@
 # db-mongo
-Singleton class to manage Mongo DB connection through mongoose
+Class to manage multiple mongoose instances
+
 It requires to have an .env file with DB_URL entry
 
 ## usage
@@ -16,8 +17,11 @@ async function foo() {
 
 ```
 
+## API
+### `Db.get([dbUri])`
+If any string is passed for the first time, then a new connection is created.
+If no string is passed it will be required to have set `.env` with DB_URI config line according to [@winkgroup/env](https://www.npmjs.com/package/@winkgroup/env) package
+
+
 ## contributing and tests
-If you are activly developing this package and you want to run tests you will need to create a `.env` file with this line:
-```
-DB_URI={ your db connection }
-```
+If you are activly developing this package and you want to run tests you will need to move `tests/config.template.json` file to `tests/config.json` and set the values.

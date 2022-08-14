@@ -1,6 +1,4 @@
-/// <reference types="node" />
 import mongoose from 'mongoose';
-import { EventEmitter } from 'node:events';
 export interface MaterialTableSearch {
     page: number;
     search: string;
@@ -10,16 +8,15 @@ export interface MaterialTableSearch {
     };
     orderDirection: 'asc' | 'desc';
 }
-export default class Db extends EventEmitter {
-    private static singleton;
-    private db;
-    private connectionStarted;
+export default class Db {
+    private static connections;
+    private conn;
     private constructor();
-    private connect;
+    get(): mongoose.Connection;
     static fromQueryToMaterialTableData(query: mongoose.Query<any[], any>, search: MaterialTableSearch): Promise<{
         data: any[];
         page: number;
         totalCount: number;
     }>;
-    static get(): Promise<typeof mongoose>;
+    static get(dbUri?: string): mongoose.Connection;
 }

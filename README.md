@@ -1,8 +1,6 @@
 # db-mongo
 Class to manage multiple mongoose instances
 
-It requires to have an .env file with DB_URL entry
-
 ## usage
 
 to get a connection (if already there is a connection it will be reused):

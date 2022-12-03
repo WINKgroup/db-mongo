@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import mongoose from 'mongoose'
-import Env from '@winkgroup/env'
 import { DataGridQuery } from './commons'
 
 export default class Db {
@@ -27,8 +26,7 @@ export default class Db {
         }
     }
 
-    static get(dbUri?:string) {
-        if (!dbUri) dbUri = Env.get('DB_URI')
+    static get(dbUri:string) {
         if (!this.connections[dbUri]) this.connections[dbUri] = new Db(dbUri)
         
         return this.connections[dbUri].conn

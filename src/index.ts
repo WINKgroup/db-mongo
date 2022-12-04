@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import mongoose from 'mongoose'
+import { Db as MongoDb } from 'mongodb'
 import { DataGridQuery } from './common'
 
 export default class Db {
@@ -10,6 +11,15 @@ export default class Db {
     }
 
     get() { return this.conn }
+
+    async getMongoDb() {
+        const sleep = (ms:number) => new Promise<void>(resolve => setTimeout(resolve, ms))
+        while(this.conn.readyState === 2) {
+            await sleep(1000)
+        }
+        if (this.conn.readyState === 1) return this.conn.db
+            else throw new Error('db disconnected')
+    }
 
     static async fromQueryToMaterialTableData(query:mongoose.Query<any[], any>, searchQuery:DataGridQuery) {
         const totalCount = await _.clone(query).countDocuments()
@@ -30,5 +40,16 @@ export default class Db {
         if (!this.connections[dbUri]) this.connections[dbUri] = new Db(dbUri)
         
         return this.connections[dbUri].conn
+    }
+
+    static getObj(dbUri:string) {
+        if (!this.connections[dbUri]) this.connections[dbUri] = new Db(dbUri)
+
+        return this.connections[dbUri]
+    }
+
+    static getMongoDb(dbUri:string) {
+        const DbObj = this.getObj(dbUri)
+        return DbObj.getMongoDb()
     }
 }

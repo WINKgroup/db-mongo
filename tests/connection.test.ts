@@ -28,6 +28,15 @@ afterAll( async () => {
     db2.close()
 })
 
+test('it should wait for db connected', async () => {
+    try {
+        const driver = await Db.getMongoDb(config.dbUri1)
+        expect(driver).toBeTruthy()
+    } catch (e) {
+        fail(e)
+    }
+})
+
 test('should create a document in "test" collection on db with dbUri1', async () => {
     const doc = new TestModel1({name: 'hello'})
     await doc.save()

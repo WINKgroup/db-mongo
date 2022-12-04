@@ -46,6 +46,30 @@ var Db = /** @class */ (function () {
         this.conn = mongoose_1.default.createConnection(dbUri);
     }
     Db.prototype.get = function () { return this.conn; };
+    Db.prototype.getMongoDb = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var sleep;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        sleep = function (ms) { return new Promise(function (resolve) { return setTimeout(resolve, ms); }); };
+                        _a.label = 1;
+                    case 1:
+                        if (!(this.conn.readyState === 2)) return [3 /*break*/, 3];
+                        return [4 /*yield*/, sleep(1000)];
+                    case 2:
+                        _a.sent();
+                        return [3 /*break*/, 1];
+                    case 3:
+                        if (this.conn.readyState === 1)
+                            return [2 /*return*/, this.conn.db];
+                        else
+                            throw new Error('db disconnected');
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
     Db.fromQueryToMaterialTableData = function (query, searchQuery) {
         return __awaiter(this, void 0, void 0, function () {
             var totalCount, sortField, data;
@@ -74,6 +98,15 @@ var Db = /** @class */ (function () {
         if (!this.connections[dbUri])
             this.connections[dbUri] = new Db(dbUri);
         return this.connections[dbUri].conn;
+    };
+    Db.getObj = function (dbUri) {
+        if (!this.connections[dbUri])
+            this.connections[dbUri] = new Db(dbUri);
+        return this.connections[dbUri];
+    };
+    Db.getMongoDb = function (dbUri) {
+        var DbObj = this.getObj(dbUri);
+        return DbObj.getMongoDb();
     };
     Db.connections = {};
     return Db;

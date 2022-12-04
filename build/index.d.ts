@@ -10,5 +10,5 @@ export default class Db {
         page: number;
         totalCount: number;
     }>;
-    static get(dbUri?: string): mongoose.Connection;
+    static get(dbUri: string): mongoose.Connection;
 }

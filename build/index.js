@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -41,7 +41,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var lodash_1 = __importDefault(require("lodash"));
 var mongoose_1 = __importDefault(require("mongoose"));
-var env_1 = __importDefault(require("@winkgroup/env"));
 var Db = /** @class */ (function () {
     function Db(dbUri) {
         this.conn = mongoose_1.default.createConnection(dbUri);
@@ -72,8 +71,6 @@ var Db = /** @class */ (function () {
         });
     };
     Db.get = function (dbUri) {
-        if (!dbUri)
-            dbUri = env_1.default.get('DB_URI');
         if (!this.connections[dbUri])
             this.connections[dbUri] = new Db(dbUri);
         return this.connections[dbUri].conn;

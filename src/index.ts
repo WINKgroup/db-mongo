@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import mongoose from 'mongoose'
-import { DataGridQuery } from './commons'
+import { DataGridQuery } from './common'
 
 export default class Db {
     private static connections:{[key:string]: Db} = {}

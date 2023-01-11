@@ -2,21 +2,26 @@
   "name": "@winkgroup/db-mongo",
   "version": "1.1.5",
   "description": "Singleton class to manage Mongo DB connection",
-  "main": "./build/index.js",
-  "types": "./build/index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
-    "build/**/*"
+    "dist/**/*"
   ],
   "scripts": {
-    "test": "npx jest",
-    "clean": "rm -rf build",
-    "build": "npm run clean && npx tsc"
+    "test": "jest",
+    "clean": "rm -rf dist",
+    "build": "npm run clean && tsc",
+    "prepare": "npm run build",
+    "format": "prettier --write 'src/**/*.ts'",
+    "playground": "ts-node-dev src/test.ts",
+    "postversion": "git push && git push --tags && npm publish"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/WINKgroup/db-mongo.git"
   },
   "keywords": [
+    "mongoose",
     "mongo",
     "db"
   ],
@@ -35,6 +40,7 @@
     "@types/lodash": "^4.14.191",
     "@types/node": "^18.11.10",
     "jest": "^29.3.1",
+    "prettier": "^2.8.2",
     "ts-jest": "^29.0.3",
     "ts-node-dev": "^2.0.0",
     "typescript": "^4.9.3"

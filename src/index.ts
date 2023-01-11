@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import mongoose from 'mongoose'
-import { Db as MongoDb } from 'mongodb'
-import { DataGridQuery } from './common'
+import { DataGridQuery, DataGridFilter } from './common'
+import DbVar from './var'
 
 export default class Db {
     private static connections:{[key:string]: Db} = {}
@@ -53,3 +53,5 @@ export default class Db {
         return DbObj.getMongoDb()
     }
 }
+
+export { DataGridQuery, DataGridFilter, DbVar }

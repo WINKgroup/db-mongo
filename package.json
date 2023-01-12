@@ -12,7 +12,7 @@
     "clean": "rm -rf dist",
     "build": "npm run clean && tsc",
     "prepare": "npm run build",
-    "format": "prettier --write 'src/**/*.ts'",
+    "format": "prettier --write 'src/**/*.ts' 'test/**/*.ts'",
     "playground": "ts-node-dev src/test.ts",
     "postversion": "git push && git push --tags && npm publish"
   },
@@ -32,6 +32,8 @@
   },
   "homepage": "https://github.com/WINKgroup/db-mongo#readme",
   "dependencies": {
+    "@winkgroup/cmd": "^2.0.0",
+    "@winkgroup/console-log": "^2.0.1",
     "lodash": "^4.17.21",
     "mongoose": "^6.7.5"
   },

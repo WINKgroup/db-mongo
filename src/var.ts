@@ -23,7 +23,7 @@ export default class DbVar {
         const vars = client.collection<{ _id: string; value: any }>(
             this.collection
         );
-        await vars.findOneAndUpdate( {_id: name }, { value: value }, { upsert: true} )
+        await vars.replaceOne( {_id: name }, { value: value }, { upsert: true} )
     }
 
     async unset(name: string) {

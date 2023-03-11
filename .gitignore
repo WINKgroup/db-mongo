@@ -3,3 +3,4 @@ node_modules
 test/config.json
 src/test.ts
 yarn.lock
+playground/config.json

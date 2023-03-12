@@ -11,12 +11,12 @@ export interface QueryParams {
     sort?: object;
 }
 
-export interface QuerySubscriber<Doc extends { _id: any }> {
+export interface QuerySubscriber<Doc> {
     id: string;
     callback: (list: Doc[], changeDoc: ChangeStreamDocument) => void;
 }
 
-export interface QueryData<Doc extends { _id: any }> {
+export interface QueryData<Doc> {
     params: QueryParams;
     list: Doc[];
     debouncer?: Cron;
@@ -27,19 +27,30 @@ export interface QueryCacheOptions {
     debounceSeconds: number;
 }
 
-export default abstract class QueryCacheAbstract<Doc extends { _id: any }> {
+export default abstract class QueryCacheAbstract<Doc> {
     protected queries = {} as { [queryHash: string]: QueryData<Doc> };
     debounceSeconds: number;
+    idName: string;
 
-    constructor(inputOptions?: Partial<QueryCacheOptions>) {
+    constructor(idName: string, inputOptions?: Partial<QueryCacheOptions>) {
         const options = _.defaults(inputOptions, {
             debounceSeconds: 0,
         });
         this.debounceSeconds = options.debounceSeconds;
+        this.idName = idName;
     }
 
-    protected abstract isSameDocKey(key1: any, key2: any): boolean;
-    protected abstract _find(params: QueryParams): Promise<Doc[]>;
+    abstract _find(params: QueryParams): Promise<Doc[]>;
+    abstract isSameId(id1: any, id2: any): boolean;
+
+    getId(doc: Doc) {
+        //@ts-ignore
+        return doc[this.idName];
+    }
+
+    protected haveSameKey(doc1: Doc, doc2: Doc) {
+        return this.isSameId(this.getId(doc1), this.getId(doc2));
+    }
 
     getList(queryHash: string) {
         return this.queries[queryHash].list;
@@ -108,9 +119,9 @@ export default abstract class QueryCacheAbstract<Doc extends { _id: any }> {
                 const fullDocument = changeDoc.fullDocument;
                 for (const pos in query.list) {
                     const doc = query.list[pos];
-                    if (this.isSameDocKey(fullDocument._id, doc._id)) {
-                        query.list[pos] = fullDocument as Doc;
-                        query.list[pos]._id = doc._id;
+                    const changeFullDocument = fullDocument as Doc;
+                    if (this.haveSameKey(changeFullDocument, doc)) {
+                        query.list[pos] = changeFullDocument;
                         notifyEventually = true;
                         break;
                     }
@@ -122,11 +133,9 @@ export default abstract class QueryCacheAbstract<Doc extends { _id: any }> {
                     newList.length === query.list.length &&
                     ['insert', 'delete'].indexOf(changeDoc.operationType) !== -1
                 ) {
-                    const originalIds = query.list.map((data) => data._id);
-                    const newids = newList.map((data) => data._id);
                     notifyEventually = false;
-                    for (const pos in originalIds) {
-                        if (!this.isSameDocKey(originalIds[pos], newids[pos])) {
+                    for (const pos in query.list) {
+                        if (!this.haveSameKey(query.list[pos], newList[pos])) {
                             notifyEventually = true;
                             break;
                         }

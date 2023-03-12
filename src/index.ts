@@ -137,19 +137,17 @@ export interface RealtimeQueryOptions extends Partial<QueryCacheOptions> {
     collectionName: string;
 }
 
-export class RealtimeQuery<
-    Doc extends { _id: any }
-> extends QueryCacheAbstract<Doc> {
+export class RealtimeQuery<Doc> extends QueryCacheAbstract<Doc> {
     private dbUri: string;
     private collectionName: string;
 
     constructor(inputOptions: RealtimeQueryOptions) {
-        super(inputOptions);
+        super('_id', inputOptions);
         this.dbUri = inputOptions.dbUri;
         this.collectionName = inputOptions.collectionName;
     }
 
-    isSameDocKey(key1: ObjectId, key2: any) {
+    isSameId(key1: ObjectId, key2: any) {
         return key1.toString() === key2.toString();
     }
 

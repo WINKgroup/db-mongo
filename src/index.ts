@@ -138,8 +138,8 @@ export interface RealtimeQueryOptions extends Partial<QueryCacheOptions> {
 }
 
 export class RealtimeQuery<Doc> extends QueryCacheAbstract<Doc> {
-    private dbUri: string;
-    private collectionName: string;
+    protected dbUri: string;
+    protected collectionName: string;
 
     constructor(inputOptions: RealtimeQueryOptions) {
         super('_id', inputOptions);

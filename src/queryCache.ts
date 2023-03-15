@@ -56,7 +56,7 @@ export default abstract class QueryCacheAbstract<Doc> {
         return this.queries[queryHash].list;
     }
 
-    subscribe(params: QueryParams, callback: (list: Doc[]) => void) {
+    subscribe(params: QueryParams, callback: (list: Doc[], changeDoc: ChangeStreamDocument) => void) {
         const hashed = QueryCacheAbstract.hash(params);
         if (!this.queries[hashed]) {
             this.queries[hashed] = {

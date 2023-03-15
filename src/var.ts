@@ -1,5 +1,10 @@
 import Db from '.';
 
+interface VarDocument extends Document {
+    _id: string
+    value: any
+}
+
 export default class DbVar {
     dbUri: string;
     collection = 'vars';
@@ -11,7 +16,7 @@ export default class DbVar {
 
     async get(name: string) {
         const client = await Db.getMongoDb(this.dbUri);
-        const vars = client.collection(this.collection);
+        const vars = client.collection<VarDocument>(this.collection);
         const variable = await vars.findOne({ _id: name });
         if (!variable) return null;
         return variable.value;
@@ -33,7 +38,7 @@ export default class DbVar {
     async unset(name: string) {
         const client = await Db.getMongoDb(this.dbUri);
 
-        const vars = client.collection(this.collection);
+        const vars = client.collection<VarDocument>(this.collection);
         const result = await vars.deleteOne({ _id: name });
         return result.deletedCount === 1;
     }

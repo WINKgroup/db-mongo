@@ -151,13 +151,13 @@ export class RealtimeQuery<Doc> extends QueryCacheAbstract<Doc> {
         return key1.toString() === key2.toString();
     }
 
-    async _find(params: QueryParams) {
+    async _find(params?: Partial<QueryParams>) {
+        if (!params) params = {}
         const conn = await Db.getMongoDb(this.dbUri);
         let query = conn
             .collection(this.collectionName)
-            .find(params.queryObj)
-            .limit(params.limit)
-            .skip(params.skip);
+            .find(params.queryObj ? params.queryObj : {})
+        if (params.limit) query = query.limit(params.limit)
         if (params.sort) query = query.sort(params.sort as Sort);
         const result = await query.toArray();
         return result as Doc[];

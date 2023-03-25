@@ -1,6 +1,6 @@
 {
   "name": "@winkgroup/db-mongo",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "Singleton class to manage Mongo DB connection",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

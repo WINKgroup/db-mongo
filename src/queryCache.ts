@@ -142,7 +142,8 @@ export default abstract class QueryCacheAbstract<Doc> {
                 }
             } else {
                 const newList = await this._find(query.params);
-                for (let pos = 0; pos < newList.length; pos++) {
+                const maxLength = Math.max(newList.length, query.list.length)
+                for (let pos = 0; pos < maxLength; pos++) {
                     switch (changeDoc.operationType) {
                         case 'update':
                             if (this.isSameId(this.getId(newList[pos]), changeDoc.documentKey)) {
@@ -154,7 +155,7 @@ export default abstract class QueryCacheAbstract<Doc> {
                             }
                             break
                         default:
-                            if (!this.haveSameKey(query.list[pos], newList[pos])) {
+                            if (pos >= query.list.length || pos >= newList.length || !this.haveSameKey(query.list[pos], newList[pos])) {
                                 if (changeDoc.operationType === 'delete') {
                                     changeList = {
                                         operationType: 'delete',
@@ -170,6 +171,7 @@ export default abstract class QueryCacheAbstract<Doc> {
                             }
                             break
                     }
+
                     if (changeList) break
                 }
 

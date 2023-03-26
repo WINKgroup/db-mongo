@@ -146,7 +146,7 @@ export default abstract class QueryCacheAbstract<Doc> {
                 for (let pos = 0; pos < maxLength; pos++) {
                     switch (changeDoc.operationType) {
                         case 'update':
-                            if (this.isSameId(this.getId(newList[pos]), changeDoc.documentKey)) {
+                            if (this.isSameId(this.getId(newList[pos]), changeDoc.documentKey._id)) {
                                 changeList = {
                                     operationType: 'update',
                                     doc: newList[pos],

@@ -1,8 +1,8 @@
 import Db from '.';
 
 interface VarDocument extends Document {
-    _id: string
-    value: any
+    _id: string;
+    value: any;
 }
 
 export default class DbVar {

@@ -12,12 +12,16 @@ export interface QueryParams {
 }
 
 export interface ChangeQueryDocumentList<Doc> {
-    operationType: 'update' | 'insert' | 'delete' | 'multiple'
-    position: number
-    doc?: Doc
+    operationType: 'update' | 'insert' | 'delete' | 'multiple';
+    position: number;
+    doc?: Doc;
 }
 
-export type QueryCallback<Doc> = (list: Doc[], changeDoc: ChangeStreamDocument, changeList: ChangeQueryDocumentList<Doc>) => void
+export type QueryCallback<Doc> = (
+    list: Doc[],
+    changeDoc: ChangeStreamDocument,
+    changeList: ChangeQueryDocumentList<Doc>
+) => void;
 
 export interface QuerySubscriber<Doc> {
     id: string;
@@ -115,74 +119,93 @@ export default abstract class QueryCacheAbstract<Doc> {
 
     onChange(changeDoc: ChangeStreamDocument) {
         const queryHashes = Object.keys(this.queries);
-        let changeList = null as ChangeQueryDocumentList<Doc> | null
+        let changeList = null as ChangeQueryDocumentList<Doc> | null;
 
         queryHashes.map(async (queryHash) => {
             const query = this.queries[queryHash];
+            const newList = await this._find(query.params);
+            const maxLength = Math.max(newList.length, query.list.length);
 
-            if (
-                changeDoc.operationType === 'update' &&
-                changeDoc.fullDocument
-            ) {
-                const fullDocument = changeDoc.fullDocument;
-                for (let pos = 0; pos < query.list.length; pos++) {
-                    const doc = query.list[pos];
-                    const changeFullDocument = fullDocument as Doc;
-                    if (this.haveSameKey(changeFullDocument, doc)) {
-                        query.list[pos] = changeFullDocument;
+            for (let pos = 0; pos < maxLength; pos++) {
+                switch (changeDoc.operationType) {
+                    case 'update':
+                        if (
+                            pos >= newList.length ||
+                            pos >= query.list.length ||
+                            !this.isSameId(
+                                this.getId(newList[pos]),
+                                this.getId(query.list[pos])
+                            )
+                        )
+                            changeList = {
+                                operationType: 'multiple',
+                                doc: undefined,
+                                position: -1,
+                            };
 
-                        changeList = {
-                            operationType: 'update',
-                            doc: changeFullDocument,
-                            position: pos
-                        }
-
-                        break;
-                    }
-                }
-            } else {
-                const newList = await this._find(query.params);
-                const maxLength = Math.max(newList.length, query.list.length)
-                for (let pos = 0; pos < maxLength; pos++) {
-                    switch (changeDoc.operationType) {
-                        case 'update':
-                            if (this.isSameId(this.getId(newList[pos]), changeDoc.documentKey._id)) {
+                        if (
+                            this.isSameId(
+                                this.getId(newList[pos]),
+                                changeDoc.documentKey._id
+                            )
+                        ) {
+                            if (!changeList)
                                 changeList = {
                                     operationType: 'update',
                                     doc: newList[pos],
-                                    position: pos
-                                }
+                                    position: pos,
+                                };
+                            else
+                                changeList = {
+                                    operationType: 'multiple',
+                                    doc: undefined,
+                                    position: -1,
+                                };
+                        }
+                        break;
+                    default:
+                        if (
+                            pos >= query.list.length ||
+                            pos >= newList.length ||
+                            !this.haveSameKey(query.list[pos], newList[pos])
+                        ) {
+                            if (changeDoc.operationType === 'delete') {
+                                changeList = {
+                                    operationType: 'delete',
+                                    position: pos,
+                                };
+                            } else {
+                                changeList = {
+                                    operationType: changeDoc.operationType as
+                                        | 'insert'
+                                        | 'delete',
+                                    doc: newList[pos],
+                                    position: pos,
+                                };
                             }
-                            break
-                        default:
-                            if (pos >= query.list.length || pos >= newList.length || !this.haveSameKey(query.list[pos], newList[pos])) {
-                                if (changeDoc.operationType === 'delete') {
-                                    changeList = {
-                                        operationType: 'delete',
-                                        position: pos
-                                    }
-                                } else {
-                                    changeList = {
-                                        operationType: changeDoc.operationType as 'insert' | 'delete',
-                                        doc: newList[pos],
-                                        position: pos
-                                    }
-                                }
-                            }
-                            break
-                    }
-
-                    if (changeList) break
+                        }
+                        break;
                 }
 
-                query.list = newList;
+                if (
+                    changeList &&
+                    (changeDoc.operationType !== 'update' ||
+                        changeList.operationType === 'multiple')
+                )
+                    break;
             }
 
+            query.list = newList;
+
             if (changeList) {
-                const requiredChangeList = changeList
+                const requiredChangeList = changeList;
                 if (!query.debouncer || !query.debouncer.debounce()) {
                     query.subscribers.map((subscriber) =>
-                        subscriber.callback(query.list, changeDoc, requiredChangeList)
+                        subscriber.callback(
+                            query.list,
+                            changeDoc,
+                            requiredChangeList
+                        )
                     );
                 }
             }

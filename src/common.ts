@@ -1,4 +1,3 @@
-
 export interface DataGridFilter {
     column: string;
     operator: string;

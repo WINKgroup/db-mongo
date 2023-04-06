@@ -1,4 +1,5 @@
 import { Db } from 'mongodb';
+import { Connection as MongooseConnection } from 'mongoose';
 
 interface VarDocument extends Document {
     _id: string;
@@ -9,7 +10,7 @@ export default class DbVar {
     db: Db;
     collection = 'vars';
 
-    constructor(db: Db, collection?: string) {
+    constructor(db: Db | MongooseConnection['db'], collection?: string) {
         this.db = db;
         if (collection) this.collection = collection;
     }

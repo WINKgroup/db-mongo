@@ -108,12 +108,12 @@ export default class MongoHelper {
 }
 
 export interface RealtimeQueryOptions extends Partial<QueryCacheOptions> {
-    db: Db;
+    db: Db | MongooseConnection['db'];
     collectionName: string;
 }
 
 export class RealtimeQuery<Doc> extends QueryCacheAbstract<Doc> {
-    protected db: Db;
+    protected db: Db | MongooseConnection['db'];
     protected collectionName: string;
 
     constructor(inputOptions: RealtimeQueryOptions) {

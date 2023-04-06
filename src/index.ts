@@ -1,8 +1,8 @@
 import Cmd from '@winkgroup/cmd';
 import ConsoleLog, { LogLevel } from '@winkgroup/console-log';
 import _ from 'lodash';
-import { ChangeStream, ChangeStreamDocument, Sort } from 'mongodb';
-import mongoose, { ObjectId } from 'mongoose';
+import { ChangeStream, ChangeStreamDocument, Db, Sort } from 'mongodb';
+import { Connection as MongooseConnection, ObjectId, Query } from 'mongoose';
 import { DataGridFilter, DataGridQuery } from './common';
 import QueryCacheAbstract, {
     QueryCacheOptions,
@@ -16,32 +16,25 @@ export interface DbBackupOptions {
     collection: string;
 }
 
-export default class Db {
-    private dbUri: string;
-    private static connections: { [key: string]: Db } = {};
+export default class MongoHelper {
     private static areMongoToolsAvailable = null as boolean | null;
-    private conn: mongoose.Connection;
-    private constructor(dbUri: string) {
-        this.conn = mongoose.createConnection(dbUri);
-        this.dbUri = dbUri;
-    }
 
-    get() {
-        return this.conn;
-    }
-
-    async getMongoDb() {
+    static async waitForMongoDbConnected(
+        mongooseConnection: MongooseConnection
+    ): Promise<MongooseConnection['db']> {
         const sleep = (ms: number) =>
             new Promise<void>((resolve) => setTimeout(resolve, ms));
-        while (this.conn.readyState === 2) {
+
+        while (mongooseConnection.readyState === 2) {
             await sleep(1000);
         }
-        // @ts-ignore: line
-        if (this.conn.readyState === 1) return this.conn.db;
+
+        if (mongooseConnection.readyState === 1) return mongooseConnection.db;
         else throw new Error('db disconnected');
     }
 
-    async backup(
+    static async backup(
+        dbUri: string,
         db: string,
         destinationPath: string,
         inputOptions?: DbBackupOptions
@@ -49,20 +42,20 @@ export default class Db {
         const options: DbBackupOptions = _.defaults(inputOptions, {
             gzip: false,
         });
-        const cmd = await Db.prepareCommand('mongodump');
+        const cmd = await MongoHelper.prepareCommand('mongodump');
         if (!cmd) return cmd;
         cmd.args = [`--db="${db}"`];
         if (options.collection)
             cmd.args.push(`--collection=${options.collection}`);
         if (options.gzip) cmd.args.push('--gzip');
         cmd.args.push(`--archive=${destinationPath}`);
-        cmd.args.push(this.dbUri);
+        cmd.args.push(dbUri);
         await cmd.run();
         return cmd.exitCode === 0;
     }
 
     static async fromQueryToMaterialTableData(
-        query: mongoose.Query<any[], any>,
+        query: Query<any[], any>,
         searchQuery: DataGridQuery
     ) {
         const totalCount = await _.clone(query).countDocuments();
@@ -83,29 +76,11 @@ export default class Db {
         };
     }
 
-    static get(dbUri: string) {
-        if (!this.connections[dbUri]) this.connections[dbUri] = new Db(dbUri);
-
-        return this.connections[dbUri].conn;
-    }
-
-    static getObj(dbUri: string) {
-        if (!this.connections[dbUri]) this.connections[dbUri] = new Db(dbUri);
-
-        return this.connections[dbUri];
-    }
-
-    static getMongoDb(dbUri: string) {
-        const DbObj = this.getObj(dbUri);
-        return DbObj.getMongoDb();
-    }
-
-    static getConsoleLog() {
-        return new ConsoleLog({ prefix: 'Db' });
-    }
-
-    protected static async prepareCommand(command: string) {
-        const consoleLog = this.getConsoleLog();
+    protected static async prepareCommand(
+        command: string,
+        consoleLog?: ConsoleLog
+    ) {
+        if (!consoleLog) consoleLog = new ConsoleLog({ prefix: 'MongoHelper' });
         const areMongoToolsAvailable = await this.checkMongoTools();
         if (!areMongoToolsAvailable) {
             consoleLog.error('mongo tools not present!');
@@ -133,28 +108,27 @@ export default class Db {
 }
 
 export interface RealtimeQueryOptions extends Partial<QueryCacheOptions> {
-    dbUri: string;
+    db: Db;
     collectionName: string;
 }
 
 export class RealtimeQuery<Doc> extends QueryCacheAbstract<Doc> {
-    protected dbUri: string;
+    protected db: Db;
     protected collectionName: string;
 
     constructor(inputOptions: RealtimeQueryOptions) {
         super('_id', inputOptions);
-        this.dbUri = inputOptions.dbUri;
+        this.db = inputOptions.db;
         this.collectionName = inputOptions.collectionName;
     }
 
-    isSameId(key1: ObjectId, key2: any) {
+    isSameId(key1: ObjectId, key2: ObjectId) {
         return key1.toString() === key2.toString();
     }
 
     async _find(params?: Partial<QueryParams>) {
         if (!params) params = {};
-        const conn = await Db.getMongoDb(this.dbUri);
-        let query = conn
+        let query = this.db
             .collection(this.collectionName)
             .find(params.queryObj ? params.queryObj : {});
         if (params.limit) query = query.limit(params.limit);
@@ -165,9 +139,7 @@ export class RealtimeQuery<Doc> extends QueryCacheAbstract<Doc> {
 
     async start() {
         let watch: ChangeStream<any, ChangeStreamDocument<any>>;
-
-        const conn = await Db.getMongoDb(this.dbUri);
-        watch = conn.collection(this.collectionName).watch();
+        watch = this.db.collection(this.collectionName).watch();
         watch.on('change', (data) => this.onChange(data));
     }
 }

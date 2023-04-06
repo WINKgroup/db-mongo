@@ -1,4 +1,4 @@
-import Db from '.';
+import { Db } from 'mongodb';
 
 interface VarDocument extends Document {
     _id: string;
@@ -6,26 +6,23 @@ interface VarDocument extends Document {
 }
 
 export default class DbVar {
-    dbUri: string;
+    db: Db;
     collection = 'vars';
 
-    constructor(dbUri: string, collection?: string) {
-        this.dbUri = dbUri;
+    constructor(db: Db, collection?: string) {
+        this.db = db;
         if (collection) this.collection = collection;
     }
 
     async get(name: string) {
-        const client = await Db.getMongoDb(this.dbUri);
-        const vars = client.collection<VarDocument>(this.collection);
+        const vars = this.db.collection<VarDocument>(this.collection);
         const variable = await vars.findOne({ _id: name });
         if (!variable) return null;
         return variable.value;
     }
 
     async set(name: string, value: any) {
-        const client = await Db.getMongoDb(this.dbUri);
-
-        const vars = client.collection<{ _id: string; value: any }>(
+        const vars = this.db.collection<{ _id: string; value: any }>(
             this.collection
         );
         await vars.replaceOne(
@@ -36,15 +33,12 @@ export default class DbVar {
     }
 
     async unset(name: string) {
-        const client = await Db.getMongoDb(this.dbUri);
-
-        const vars = client.collection<VarDocument>(this.collection);
+        const vars = this.db.collection<VarDocument>(this.collection);
         const result = await vars.deleteOne({ _id: name });
         return result.deletedCount === 1;
     }
 
     async reset() {
-        const client = await Db.getMongoDb(this.dbUri);
-        return client.dropCollection(this.collection);
+        return this.db.dropCollection(this.collection);
     }
 }

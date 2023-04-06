@@ -1,19 +1,19 @@
 {
   "name": "@winkgroup/db-mongo",
   "version": "3.0.6",
-  "description": "Singleton class to manage Mongo DB connection",
+  "description": "Helper functions fo mongodb and mongoose",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist/**/*"
   ],
   "scripts": {
-    "test": "jest",
     "clean": "rm -rf dist",
     "build": "npm run clean && tsc",
     "prepare": "npm run build",
-    "format": "prettier --write 'src/**/*.ts' 'test/**/*.ts'",
-    "realtime": "ts-node-dev playground/realtime.ts",
+    "playground": "npx ts-node-dev playground/test.ts",
+    "realtime": "npx ts-node-dev playground/realtime.ts",
+    "format": "prettier --write 'src/**/*.ts' 'playground/**/*.ts'",
     "postversion": "git push && git push --tags && npm publish"
   },
   "repository": {
@@ -36,21 +36,19 @@
     "@winkgroup/console-log": "^2.0.1",
     "@winkgroup/cron": "^2.1.1",
     "lodash": "^4.17.21",
+    "mongodb": "^5.2.0",
     "mongoose": "^7.0.2",
     "object-hash": "^3.0.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@types/jest": "^29.4.2",
     "@types/lodash": "^4.14.191",
     "@types/node": "^18.15.3",
     "@types/object-hash": "^3.0.2",
     "@types/uuid": "^9.0.1",
     "@winkgroup/misc": "^2.0.0",
     "@winkgroup/webserver": "^1.2.2",
-    "jest": "^29.5.0",
     "prettier": "^2.8.4",
-    "ts-jest": "^29.0.5",
     "ts-node-dev": "^2.0.0",
     "typescript": "^4.9.5"
   }

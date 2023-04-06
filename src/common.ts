@@ -12,9 +12,3 @@ export interface DataGridQuery {
     orderBy?: string;
     orderDirection?: 'asc' | 'desc';
 }
-
-export interface RealtimeQueryData {
-    dbUri: string;
-    collection: string;
-    query?: object;
-}

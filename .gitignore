@@ -4,3 +4,4 @@ test/config.json
 src/test.ts
 yarn.lock
 playground/config.json
+playground/test.ts

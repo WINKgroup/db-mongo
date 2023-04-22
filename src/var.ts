@@ -10,7 +10,7 @@ export default class DbVar {
     db: Db;
     collection = 'vars';
 
-    constructor(db: Db | MongooseConnection['db'], collection?: string) {
+    constructor(db: Db, collection?: string) {
         this.db = db;
         if (collection) this.collection = collection;
     }

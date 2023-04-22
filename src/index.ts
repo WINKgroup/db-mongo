@@ -138,8 +138,7 @@ export class RealtimeQuery<Doc> extends QueryCacheAbstract<Doc> {
     }
 
     async start() {
-        let watch: ChangeStream<any, ChangeStreamDocument<any>>;
-        watch = this.db.collection(this.collectionName).watch();
+        let watch = this.db.collection(this.collectionName).watch();
         watch.on('change', (data) => this.onChange(data));
     }
 }

@@ -1,7 +1,7 @@
 import Cmd from '@winkgroup/cmd';
 import ConsoleLog, { LogLevel } from '@winkgroup/console-log';
 import _ from 'lodash';
-import { ChangeStream, ChangeStreamDocument, Db, Sort } from 'mongodb';
+import { Db, Sort } from 'mongodb';
 import { Connection as MongooseConnection, ObjectId, Query } from 'mongoose';
 import { DataGridFilter, DataGridQuery } from './common';
 import QueryCacheAbstract, {

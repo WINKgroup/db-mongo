@@ -3,7 +3,6 @@ import ConsoleLog, { LogLevel } from '@winkgroup/console-log';
 import _ from 'lodash';
 import { Db, Sort } from 'mongodb';
 import { Connection as MongooseConnection, ObjectId, Query } from 'mongoose';
-import { DataGridFilter, DataGridQuery } from './common';
 import QueryCacheAbstract, {
     QueryCacheOptions,
     QueryData,
@@ -52,28 +51,6 @@ export default class MongoHelper {
         cmd.args.push(dbUri);
         await cmd.run();
         return cmd.exitCode === 0;
-    }
-
-    static async fromQueryToMaterialTableData(
-        query: Query<any[], any>,
-        searchQuery: DataGridQuery
-    ) {
-        const totalCount = await _.clone(query).countDocuments();
-        if (searchQuery.orderBy) {
-            const sortField =
-                (searchQuery.orderDirection !== 'desc' ? '' : '-') +
-                searchQuery.orderBy;
-            query.collation({ locale: 'en' }).sort(sortField);
-        }
-        const data = await query
-            .skip(searchQuery.pageSize * searchQuery.page)
-            .limit(searchQuery.pageSize);
-
-        return {
-            data: data,
-            page: searchQuery.page,
-            totalCount: totalCount,
-        };
     }
 
     protected static async prepareCommand(
@@ -144,8 +121,6 @@ export class RealtimeQuery<Doc> extends QueryCacheAbstract<Doc> {
 }
 
 export {
-    DataGridQuery,
-    DataGridFilter,
     DbVar,
     QueryCacheAbstract,
     QueryCacheOptions,

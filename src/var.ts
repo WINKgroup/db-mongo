@@ -1,5 +1,4 @@
 import { Db } from 'mongodb';
-import { Connection as MongooseConnection } from 'mongoose';
 
 interface VarDocument extends Document {
     _id: string;

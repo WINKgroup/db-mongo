@@ -1,5 +1,5 @@
 import Cmd from '@winkgroup/cmd';
-import ConsoleLog, { LogLevel } from '@winkgroup/console-log';
+import ConsoleLog, { ConsoleLogLevel } from '@winkgroup/console-log';
 import _ from 'lodash';
 import { Db, Sort } from 'mongodb';
 import { Connection as MongooseConnection, ObjectId, Query } from 'mongoose';
@@ -67,7 +67,7 @@ export default class MongoHelper {
         const cmd = new Cmd(command, {
             getResult: false,
             timeout: 60,
-            stderrOptions: { logLevel: LogLevel.NONE },
+            stderrOptions: { logLevel: ConsoleLogLevel.NONE },
         });
         cmd.consoleLog = consoleLog;
         return cmd;
@@ -120,10 +120,4 @@ export class RealtimeQuery<Doc> extends QueryCacheAbstract<Doc> {
     }
 }
 
-export {
-    DbVar,
-    QueryCacheAbstract,
-    QueryCacheOptions,
-    QueryParams,
-    QueryData,
-};
+export { DbVar, QueryCacheAbstract, QueryCacheOptions, QueryParams, QueryData };

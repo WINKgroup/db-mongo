@@ -20,7 +20,7 @@ export interface ChangeQueryDocumentList<Doc> {
 export type QueryCallback<Doc> = (
     list: Doc[],
     changeDoc: ChangeStreamDocument,
-    changeList: ChangeQueryDocumentList<Doc>
+    changeList: ChangeQueryDocumentList<Doc>,
 ) => void;
 
 export interface QuerySubscriber<Doc> {
@@ -82,7 +82,7 @@ export default abstract class QueryCacheAbstract<Doc> {
             };
 
             this._find(params).then(
-                (list) => (this.queries[hashed].list = list)
+                (list) => (this.queries[hashed].list = list),
             );
         }
 
@@ -134,7 +134,7 @@ export default abstract class QueryCacheAbstract<Doc> {
                             pos >= query.list.length ||
                             !this.isSameId(
                                 this.getId(newList[pos]),
-                                this.getId(query.list[pos])
+                                this.getId(query.list[pos]),
                             )
                         )
                             changeList = {
@@ -146,7 +146,7 @@ export default abstract class QueryCacheAbstract<Doc> {
                         if (
                             this.isSameId(
                                 this.getId(newList[pos]),
-                                changeDoc.documentKey._id
+                                changeDoc.documentKey._id,
                             )
                         ) {
                             if (!changeList)
@@ -204,8 +204,8 @@ export default abstract class QueryCacheAbstract<Doc> {
                         subscriber.callback(
                             query.list,
                             changeDoc,
-                            requiredChangeList
-                        )
+                            requiredChangeList,
+                        ),
                     );
                 }
             }

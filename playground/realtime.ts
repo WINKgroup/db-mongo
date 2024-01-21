@@ -30,7 +30,7 @@ Be sure to have correctly configurated playground/config.json
         },
         (list) => {
             console.info('NEW DATA!', list);
-        }
+        },
     );
 
     realTimeQuery.start();

@@ -23,12 +23,12 @@ export default class DbVar {
 
     async set(name: string, value: any) {
         const vars = this.db.collection<{ _id: string; value: any }>(
-            this.collection
+            this.collection,
         );
         await vars.replaceOne(
             { _id: name },
             { value: value },
-            { upsert: true }
+            { upsert: true },
         );
     }
 

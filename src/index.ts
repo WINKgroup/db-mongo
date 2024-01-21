@@ -2,7 +2,7 @@ import Cmd from '@winkgroup/cmd';
 import ConsoleLog, { ConsoleLogLevel } from '@winkgroup/console-log';
 import _ from 'lodash';
 import { Db, Sort } from 'mongodb';
-import { Connection as MongooseConnection, ObjectId, Query } from 'mongoose';
+import { Connection as MongooseConnection, ObjectId } from 'mongoose';
 import QueryCacheAbstract, {
     QueryCacheOptions,
     QueryData,
@@ -19,7 +19,7 @@ export default class MongoHelper {
     private static areMongoToolsAvailable = null as boolean | null;
 
     static async waitForMongoDbConnected(
-        mongooseConnection: MongooseConnection
+        mongooseConnection: MongooseConnection,
     ): Promise<MongooseConnection['db']> {
         const sleep = (ms: number) =>
             new Promise<void>((resolve) => setTimeout(resolve, ms));
@@ -36,7 +36,7 @@ export default class MongoHelper {
         dbUri: string,
         db: string,
         destinationPath: string,
-        inputOptions?: DbBackupOptions
+        inputOptions?: DbBackupOptions,
     ) {
         const options: DbBackupOptions = _.defaults(inputOptions, {
             gzip: false,
@@ -55,7 +55,7 @@ export default class MongoHelper {
 
     protected static async prepareCommand(
         command: string,
-        consoleLog?: ConsoleLog
+        consoleLog?: ConsoleLog,
     ) {
         if (!consoleLog) consoleLog = new ConsoleLog({ prefix: 'MongoHelper' });
         const areMongoToolsAvailable = await this.checkMongoTools();
@@ -77,7 +77,7 @@ export default class MongoHelper {
         if (this.areMongoToolsAvailable !== null)
             return this.areMongoToolsAvailable;
         const results = await Promise.all(
-            ['mongodump', 'mongorestore'].map((command) => Cmd.exists(command))
+            ['mongodump', 'mongorestore'].map((command) => Cmd.exists(command)),
         );
         this.areMongoToolsAvailable = results[0] && results[1];
         return this.areMongoToolsAvailable;

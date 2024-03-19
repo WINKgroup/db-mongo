@@ -36,20 +36,20 @@
     "@winkgroup/console-log": "^3.0.2",
     "@winkgroup/cron": "^2.1.6",
     "lodash": "^4.17.21",
-    "mongodb": "6.3.0",
-    "mongoose": "^8.1.0",
+    "mongodb": "6.5.0",
+    "mongoose": "^8.2.2",
     "object-hash": "^3.0.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.202",
-    "@types/node": "^20.11.5",
+    "@types/lodash": "^4.17.0",
+    "@types/node": "^20.11.30",
     "@types/object-hash": "^3.0.6",
-    "@types/uuid": "^9.0.7",
+    "@types/uuid": "^9.0.8",
     "@winkgroup/misc": "^2.0.3",
     "@winkgroup/webserver": "^3.0.0",
-    "prettier": "^3.2.4",
+    "prettier": "^3.2.5",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.2"
   }
 }

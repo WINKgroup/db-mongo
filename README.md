@@ -115,7 +115,7 @@ When creating a new DbVar object, you can optionally specify the name of the col
 
 To use the DbVar class, you need an instance of MongoDB's Db class. Here's how you can utilize the DbVar methods:
 ```js
-import DbVar from './path-to-DbVar';
+import DbVar from '@winkgroup/db-mongo';
 import { MongoClient } from 'mongodb';
 
 // Connect to your MongoDB database

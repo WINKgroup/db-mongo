@@ -105,17 +105,17 @@ export class RealtimeQuery<Doc> extends QueryCacheAbstract<Doc> {
 
     async _find(params?: Partial<QueryParams>) {
         if (!params) params = {};
-        let query = this.db
+        let query = this.db!
             .collection(this.collectionName)
             .find(params.queryObj ? params.queryObj : {});
         if (params.limit) query = query.limit(params.limit);
-        if (params.sort) query = query.sort(params.sort as Sort);
+        if (params.sort) query = query.sort(params.sort as any);
         const result = await query.toArray();
         return result as Doc[];
     }
 
     async start() {
-        let watch = this.db.collection(this.collectionName).watch();
+        let watch = this.db!.collection(this.collectionName).watch();
         watch.on('change', (data) => this.onChange(data));
     }
 }

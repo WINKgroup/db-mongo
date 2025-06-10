@@ -6,3 +6,4 @@ yarn.lock
 playground/config.json
 playground/test.ts
 .DS_Store
+pnpm-lock.yaml

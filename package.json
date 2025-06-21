@@ -1,6 +1,6 @@
 {
   "name": "@winkgroup/db-mongo",
-  "version": "4.1.4",
+  "version": "4.1.5",
   "description": "Helper functions fo mongodb and mongoose",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { Db } from 'mongodb';
 import mongoose, { Connection as MongooseConnection, ObjectId } from 'mongoose';
 import QueryCacheAbstract, {
+    ChangeQueryDocumentList,
     QueryCacheOptions,
     QueryData,
     QueryParams,
@@ -213,5 +214,11 @@ export class RealtimeQuery<Doc> extends QueryCacheAbstract<Doc> {
     }
 }
 
-export { DbVar, QueryCacheAbstract, QueryCacheOptions, QueryData, QueryParams };
-
+export {
+    DbVar,
+    QueryCacheAbstract,
+    QueryCacheOptions,
+    QueryData,
+    QueryParams,
+    ChangeQueryDocumentList,
+};

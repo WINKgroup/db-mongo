@@ -36,7 +36,7 @@
     "@winkgroup/console-log": "^3.0.3",
     "@winkgroup/cron": "^2.3.0",
     "lodash": "^4.17.21",
-    "mongodb": "6.18.0",
+    "mongodb": "~6.17.0",
     "mongoose": "^8.16.5",
     "object-hash": "^3.0.0",
     "uuid": "^11.1.0"

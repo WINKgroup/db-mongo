@@ -103,16 +103,24 @@ export default abstract class QueryCacheAbstract<Doc> {
     unsubscribe(subscriberId: string) {
         for (const hash of Object.keys(this.queries)) {
             let found = false;
-            for (let i = 0; i < this.queries[hash].subscribers.length; i++) {
+            for (
+                let i = this.queries[hash].subscribers.length - 1;
+                i >= 0;
+                i--
+            ) {
                 const subscriber = this.queries[hash].subscribers[i];
+                if (!subscriber) {
+                    delete this.queries[hash].subscribers[i];
+                    continue;
+                }
                 if (subscriber.id === subscriberId) {
                     delete this.queries[hash].subscribers[i];
-                    if (this.queries[hash].subscribers.length === 0)
-                        delete this.queries[hash];
                     found = true;
                     break;
                 }
             }
+            if (this.queries[hash].subscribers.length === 0)
+                delete this.queries[hash];
             if (found) break;
         }
     }
